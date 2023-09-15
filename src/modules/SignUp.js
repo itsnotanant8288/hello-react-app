@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://127.0.0.1:3031/api/users", {
+      const response = await axios.post("http://127.0.0.1:3032/api/users", {
         user_name: formData.name,
         email: formData.email,
         password: formData.password,
@@ -33,10 +35,16 @@ const SignUp = () => {
       if (response.status === 200) {
         console.log("User created successfully:", response.data);
         // You can handle success here, e.g., redirect to a different page
+        toast.success("User created successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       }
     } catch (error) {
       console.error("Error creating user:", error);
       // Handle error, e.g., display an error message to the user
+      toast.error("Error creating user", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
     }
   };
 
