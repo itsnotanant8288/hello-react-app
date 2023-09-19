@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,9 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
+
+
+const errorMessageClass {
+  color: 'red', /* Change the color to red or any other desired color */
+};

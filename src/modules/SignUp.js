@@ -1,41 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({
+  const initialValues = {
     name: "",
     email: "",
     password: "",
     phone_number: "",
     age: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string().email("Invalid email address").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+    phone_number: Yup.string().required("Phone number is required"),
+    age: Yup.number().required("Age is required").positive("Age must be positive"),
+  });
 
+  const handleSubmit = async (values) => {
     try {
       const response = await axios.post("http://127.0.0.1:3032/api/users", {
-        user_name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone_number: formData.phone_number,
-        age: formData.age,
+        user_name: values.name,
+        email: values.email,
+        password: values.password,
+        phone_number: values.phone_number,
+        age: values.age,
       });
 
       if (response.status === 200) {
         console.log("User created successfully:", response.data);
         // You can handle success here, e.g., redirect to a different page
-        toast.success("User created successfully", {
+        toast.success(response.data.message, {
           position: toast.POSITION.TOP_RIGHT,
         });
       }
@@ -51,64 +51,40 @@ const SignUp = () => {
   return (
     <div>
       <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="phone_number">Phone Number:</label>
-          <input
-            type="text"
-            id="phone_number"
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="age">Age:</label>
-          <input
-            type="number"
-            id="age"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        <Form>
+          <div>
+            <label htmlFor="name">Name:</label>
+            <Field type="text" id="name" name="name" />
+            <ErrorMessage name="name" component="div" style={{ color: 'red' }}/>
+          </div>
+          <div>
+            <label htmlFor="email">Email:</label>
+            <Field type="email" id="email" name="email" />
+            <ErrorMessage name="email" component="div" style={{ color: 'red' }} />
+          </div>
+          <div>
+            <label htmlFor="password">Password:</label>
+            <Field type="password" id="password" name="password" />
+            <ErrorMessage name="password" component="div" style={{ color: 'red' }}/>
+          </div>
+          <div>
+            <label htmlFor="phone_number">Phone Number:</label>
+            <Field type="text" id="phone_number" name="phone_number" />
+            <ErrorMessage name="phone_number" component="div" style={{ color: 'red' }}/>
+          </div>
+          <div>
+            <label htmlFor="age">Age:</label>
+            <Field type="number" id="age" name="age" />
+            <ErrorMessage name="age" component="div" style={{ color: 'red' }}/>
+          </div>
+          <button type="submit">Sign Up</button>
+        </Form>
+      </Formik>
     </div>
   );
 };
